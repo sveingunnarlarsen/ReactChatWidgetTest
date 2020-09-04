@@ -17,7 +17,8 @@
     "style-loader": "^1.0.1",
     "css-loader": "^3.4.2",
     "file-loader": "^6.0.0",
-    "react-chat-widget": "^3.0.5"
+    "react-chat-widget": "^3.0.5",
+    "react-chat-elements": "^10.10.2"
   },
   "devDependencies": {
     "@types/react": "16.9.35",
