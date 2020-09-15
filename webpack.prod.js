@@ -1,7 +1,9 @@
-const presetEnv = require.resolve('@babel/preset-env');
-const presetReact = require.resolve('@babel/preset-react');
-const tsPreset = require.resolve('@babel/preset-typescript');
-const webpack = require('webpack');
+const presetEnv = require.resolve("@babel/preset-env");
+const presetReact = require.resolve("@babel/preset-react");
+const classPropPlugin = require.resolve("@babel/plugin-proposal-class-properties");
+const tsPreset = require.resolve("@babel/preset-typescript");
+const propDecorators = require.resolve("@babel/plugin-proposal-decorators");
+const webpack = require("webpack");
 const htmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = settings => ({
@@ -14,25 +16,26 @@ module.exports = settings => ({
         publicPath: `/webapp/${settings.appName}`
     },
     resolve: {
-        extensions: ['.ts', '.tsx', '.js', '.jsx']
+        extensions: [".ts", ".tsx", ".js", ".d.ts"]
     },
     module: {
-        rules: [
+		rules: [
+			{
+				test: /\.(ts|tsx|js|jsx|d.ts)$/,
+				exclude: /node_modules/,
+				use: [{
+					loader: "babel-loader",
+					options: {
+						presets: [presetEnv, tsPreset, presetReact],
+						plugins: [[propDecorators, {legacy: true}], [classPropPlugin, {loose: true}]]
+					}
+				}]
+			},
             {
-                test: /\.(js|ts|jsx|tsx)$/,
-                exclude: /node_modules/,
-                use: {
-                    loader: 'babel-loader',
-                    options: {
-                        presets: [presetEnv, tsPreset, presetReact]
-                    }
-                }
+            	test: /\.css$/,
+              	use: ["style-loader", "css-loader"],
             },
-            {
-                test: /\.css$/,
-                use: ['style-loader', 'css-loader']
-            },
-            {
+			{
                 test: /\.(png|jpe?g|gif|svg)$/,
                 use: [
                     {
@@ -40,7 +43,7 @@ module.exports = settings => ({
                         options: {
                             name(resourcePath) {
                                 return resourcePath;
-                            },
+                            }
                         }
                     }
                 ]

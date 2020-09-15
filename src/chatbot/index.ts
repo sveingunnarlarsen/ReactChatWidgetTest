@@ -6,12 +6,40 @@ const wsProtocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
 const lsUrl = `${wsProtocol}://${window.location.hostname}:${1616}`;
 
 declare global {
-    interface Window { ChatbotData: {id: string}; }
+    interface Window { ChatbotData: {id: string, title: string, subTitle: string, changeChatbot: (id: string) => void; close: () => void}}
 }
 
-const chatbotData = window.ChatbotData ? window.ChatbotData : {
+window.ChatbotData =  window.ChatbotData ? window.ChatbotData : {
     id: "795B6EA9-06EE-EA11-9452-7085C23EF572",
+    changeChatbot: null,
+    close: null,
+    title: "Title",
+    subTitle: "Sub Title",
 };
+
+window.ChatbotData.changeChatbot = async (id: string) => {
+    console.log("Change chatbot called");
+    window.ChatbotData.id = id;
+
+    const rootDiv = document.getElementById('chatbot-root');
+    if (rootDiv) {
+        rootDiv.style.visibility = "";
+    }    
+
+    if (!client.isConnected) {
+        await client.connect(lsUrl);
+    }
+    await client.initialize(id);
+}
+
+window.ChatbotData.close = async () => {
+
+    await client.close();
+    const rootDiv = document.getElementById('chatbot-root');
+    if (rootDiv) {
+        rootDiv.style.visibility = "hidden";
+    }
+}
 
 (async () => {
     try {
@@ -23,12 +51,12 @@ const chatbotData = window.ChatbotData ? window.ChatbotData : {
             await new Promise(r => setTimeout(r, 1000));
             const result = await client.connect(lsUrl);
             if (result.success) {
-                client.initialize(chatbotData.id);
+                await client.initialize(window.ChatbotData.id);
                 console.log('Chatbot reconnected');
             }
         });
 
-        await client.initialize(chatbotData.id);
+        await client.initialize(window.ChatbotData.id);
         console.log("Client initialized");
     } catch (e) {
         console.log("Error: ", e);

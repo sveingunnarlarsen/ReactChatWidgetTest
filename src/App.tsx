@@ -1,15 +1,13 @@
 import React, { Component } from 'react';
 import { Widget, addResponseMessage, renderCustomComponent } from 'react-chat-widget';
 import 'react-chat-widget/lib/styles.css';
-import 'react-chat-elements/dist/main.css';
 
 import {getChatbotReply} from "./chatbot";
 import Button from "./chatbot/Button";
-import { ChatItem, MessageBox } from 'react-chat-elements'
 
 class App extends Component {
   componentDidMount() {
-    
+    console.log("Testing");
   }
 
   handleNewUserMessage = async (newMessage) => {
@@ -19,23 +17,21 @@ class App extends Component {
       for (let i = 0; i < result.length; i++) {
         addResponseMessage(result[i].text);
       } 
-
-      /*
-      if (result.answer) {      
-        addResponseMessage(result.answer);
-      } else {
-        
-      }
-      */
+      
     } catch (e) {
       addResponseMessage(e.message);
     }  
   }
 
   render() {
+
+    console.log(window.ChatbotData);
+
     return (
       <div className="App">
         <Widget
+          title={window.ChatbotData.title}
+          subtitle={window.ChatbotData.subTitle}
           handleNewUserMessage={this.handleNewUserMessage}
         />
       </div>
